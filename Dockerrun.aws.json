@@ -1,0 +1,40 @@
+{
+  "AWSEBDockerrunVersion": 2,
+  "containerDefinitions": [
+    {
+      "name": "client",
+      "image": "wilfredlopez/multi-client-prod",
+      "hostname": "client",
+      "essensital": false,
+      "memory": 128
+    },
+    {
+      "name": "api",
+      "image": "wilfredlopez/multi-api-prod",
+      "hostname": "api",
+      "essensital": false,
+      "memory": 128
+    },
+    {
+      "name": "worker",
+      "image": "wilfredlopez/multi-worker-prod",
+      "hostname": "worker",
+      "essensital": false,
+      "memory": 128
+    },
+    {
+      "name": "nginx",
+      "image": "wilfredlopez/multi-nginx-prod",
+      "hostname": "nginx",
+      "essensital": true,
+      "memory": 128,
+      "portMappings": [
+        {
+          "hostPort": 80,
+          "containerPort": 80
+        }
+      ],
+      "links": ["client", "api"]
+    }
+  ]
+}

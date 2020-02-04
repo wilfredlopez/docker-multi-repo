@@ -1,0 +1,27 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t wilfredlopez/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run wilfredlopez/react-test npm run test -- --coverage --watchAll=false
+
+after_success:
+  - docker build -t wilfredlopez/multi-client-prod ./client
+  - docker build -t wilfredlopez/multi-api-prod ./api
+  - docker build -t wilfredlopez/multi-nginx-prod ./nginx
+  - docker build -t wilfredlopez/multi-worker-prod ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take images and push them to docker hub
+  - docker push wilfredlopez/multi-client-prod
+  - docker push wilfredlopez/multi-api-prod
+  - docker push wilfredlopez/multi-nginx-prod
+  - docker push wilfredlopez/multi-worker-prod
+# DEPLOY DOESNT WORK IN THIS CASE WITH HEROKU
+# deploy:
+#   provider: heroku
+#   api_key: $HEROKU_KEY
+#   app: multi-docker-app
